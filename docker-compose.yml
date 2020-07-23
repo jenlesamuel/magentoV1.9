@@ -1,0 +1,38 @@
+version: "3"
+services:
+  #PHP Service
+  web:
+    # build:
+    #   context: .
+    #   dockerfile: ./docker/web.Dockerfile
+    image: php:7.2-apache
+    restart: unless-stopped
+    tty: true
+    container_name: "magento1_web"
+    working_dir: /var/www/html
+    ports:
+      - "8001:80"
+      - "4431:443"
+    volumes:
+      #- ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./:/var/www/html
+
+  #MySQL Service
+  db:
+    image: mysql:5.7.22
+    container_name: "magento1_db"
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "33066:3306"
+    environment:
+      MYSQL_DATABASE: magento2
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - dbdata:/var/lib/mysql
+      #- ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+      #- ./docker/mysql/startup.sh:/docker-entrypoint-initdb.d/startup.sh
+
+volumes:
+  dbdata:
+    driver: local
